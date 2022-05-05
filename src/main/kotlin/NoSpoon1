@@ -15,11 +15,7 @@ fun main(args: Array<String>) {
         s.forEachIndexed { indexX, chr ->
             if (chr == '0') {
                 game.neighborX = game.checkX(indexX, indexY)
-            }
-            if (chr == '0') {
                 game.neighborY = game.checkY(indexX, indexY)
-            }
-            if (chr == '0') {
                 game.joinLocations(indexX, indexY)
                 println(game.locations.joinToString(" "))
             }
