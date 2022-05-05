@@ -1,0 +1,72 @@
+import java.util.*
+import java.io.*
+import java.math.*
+import kotlin.system.exitProcess
+
+/**
+ * Don't let the machines win. You are humanity's last hope...
+ **/
+fun main(args: Array<String>) {
+    val game: Game = Game()
+
+    game.grid.forEachIndexed { indexY, s ->
+        if (s.isBlank()) exitProcess(0)
+
+        s.forEachIndexed { indexX, chr ->
+            if (chr == '0') {
+                game.neighborX = game.checkX(indexX, indexY)
+            }
+            if (chr == '0') {
+                game.neighborY = game.checkY(indexX, indexY)
+            }
+            if (chr == '0') {
+                game.joinLocations(indexX, indexY)
+                println(game.locations.joinToString(" "))
+            }
+        }
+    }
+
+    // Three coordinates: a node, its right neighbor, its bottom neighbor
+}
+class Game (
+    val width: Int = readLine()?.toInt() ?: 0, // the number of cells on the X axis
+    val height: Int = readLine()?.toInt() ?: 0, // the number of cells on the Y axis
+
+    // Init grid
+    val grid: List<String> = List(height) { readLine() ?: "" },
+    var neighborX: Pair<Int, Int> = (0 to 0),
+    var neighborY: Pair<Int, Int> = (0 to 0),
+    val locations: MutableList<Int> = MutableList(6) { -1 }
+) {
+
+    // TODO: 5/4/22 Declaration of game state
+
+    fun joinLocations(indexX: Int, indexY: Int){
+        locations[0] = indexX
+        locations[1] = indexY
+        locations[2] = neighborX.first
+        locations[3] = neighborX.second
+        locations[4] = neighborY.first
+        locations[5] = neighborY.second
+    }
+
+    fun checkX(indexX: Int, indexY: Int): Pair<Int, Int> {
+        if (indexX == width -1) return -1 to -1
+        for (i in indexX + 1 until width) {
+            if (grid[indexY][i] == '0') {
+                return i to indexX
+            }
+        }
+        return -1 to -1
+    }
+
+    fun checkY(indexX: Int, indexY: Int): Pair<Int, Int> {
+        if (indexY == height - 1) return -1 to -1
+        for (i in indexY + 1 until height) {
+            if (grid[i][indexX] == '0') {
+                return indexX to i
+            }
+        }
+        return -1 to -1
+    }
+}
