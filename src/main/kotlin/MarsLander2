@@ -1,0 +1,114 @@
+import java.util.*
+import java.io.*
+import java.math.*
+import kotlin.math.abs
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+fun main(args: Array<String>) {
+    val lander = Lander()
+
+    // game loop
+    while (true) {
+        // below is command cycle, each fun call returns command string, to be printed
+        // while !inLZ, calls getToLZ
+        // while inLZ, calls adjustVSpeed
+        if (!lander.inLandingZone()) {
+            println(lander.getToLandZone())
+        } else if (lander.hSpeed > 5 || lander.hSpeed < -5){
+            println(lander.adjustHSpeed(true, 0))
+        } else {
+            println(lander.adjustVSpeed())
+        }
+        lander.updateData()
+    }
+}
+
+class Lander(
+    var x: Int = 0, var y: Int = 0,
+    var hSpeed: Int = 0, var vSpeed: Int = 0,
+    var fuel: Int = 0, var rotation: Int = 0,
+    var power: Int = 0
+) {
+    val scan: Scanner = Scanner(System.`in`)
+    var landScape: List<Pair<Int, Int>> = List(scan.nextInt()) {
+        // X coordinate of a surface point. (0 to 6999)
+        // Y coordinate of a surface point.
+        // By linking all the points together in a sequential fashion, you form the surface of Mars.
+        scan.nextInt() to scan.nextInt()
+    }
+    val landingZone = identifyLZ()
+
+    init {
+        updateData()
+    }
+
+    fun updateData() {
+        x = scan.nextInt()
+        y = scan.nextInt()
+        hSpeed = scan.nextInt() // the horizontal speed (in m/s), can be negative.
+        vSpeed = scan.nextInt() // the vertical speed (in m/s), can be negative.
+        fuel = scan.nextInt() // the quantity of remaining fuel in liters.
+        rotation = scan.nextInt() // the rotation angle in degrees (-90 to 90).
+        power = scan.nextInt() // the thrust power (0 to 4).
+    }
+
+    fun getToLandZone(): String {
+        val command: String
+        val towardsLandingZone: Boolean
+        if (x < landingZone.first) {
+            towardsLandingZone = (landingZone.first + hSpeed > landingZone.first)
+            command = adjustHSpeed(false, landingZone.first - x, towardsLandingZone)
+        } else {
+            towardsLandingZone = (landingZone.second + hSpeed < landingZone.second)
+            command = adjustHSpeed(false, x - landingZone.second, towardsLandingZone)
+        }
+        return command
+    }
+
+    //Either zeros HSpeed or increases it to get to landZone
+    fun adjustHSpeed(inLandingZone: Boolean, distanceToLZone: Int, towardsLandingZone: Boolean = true): String {
+        var targetAngle = 0
+        if (inLandingZone) {
+            // when inLandingZone gently adjust speed to be below abs(20)
+            if (hSpeed > 5) {
+                targetAngle = 30
+            } else if (hSpeed < -5) {
+                targetAngle = -30
+            } else {
+                targetAngle = 0
+            }
+        } else {
+            // !inLandingZone, depending on hSpeed, use either speed up angle (30) or coast angle (0)
+            if (towardsLandingZone) {
+                targetAngle = if (abs(hSpeed) > 60) {
+                     targetAngle = if (hSpeed > 0) 15 else -15
+                } else if(hSpeed > 45 || hSpeed < -45) {
+                    0
+                } else {
+                    // if not to left of first LZ point, then it's right of secondLZ point
+                    if (landingZone.first - x > 100) -30 else 30
+                }
+            } else {
+                targetAngle = if (hSpeed < 0) -45 else 45
+            }
+        }
+        return "$targetAngle 4"
+    }
+
+    //When called, assumed rotation is 0, maintains ~(-39) vSpeed
+    fun adjustVSpeed(): String {
+        return if (vSpeed < -35) "0 4" else "0 1"
+    }
+
+    private fun identifyLZ(): Pair<Int, Int> {
+        var landZ: Pair<Int, Int> = 0 to 0
+        landScape.windowed(2, 1).map {
+            if (it[0].second == it[1].second) landZ = it[0].first to it[1].first
+        }
+        return landZ
+    }
+    fun inLandingZone() = !(x < landingZone.first || x > landingZone.second)
+}
