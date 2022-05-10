@@ -1,36 +1,34 @@
 import java.util.*
 import java.io.*
 import java.math.*
+import javax.print.DocFlavor.STRING
 
 /**
  * Auto-generated code below aims at helping you parse
  * the standard input according to the problem statement.
  **/
-fun main(args : Array<String>) {
-    val input = Scanner(System.`in`)
-    val W = input.nextInt() // width of the building.
-    val H = input.nextInt() // height of the building.
-    val N = input.nextInt() // maximum number of turns before game over.
-    val X0 = input.nextInt()
-    val Y0 = input.nextInt()
-    input.close()
-
-    val building = Building(W, H, X0, Y0)
+fun main() {
+    val building = Building()
     // game loop
     while (true) {
         println(building.controlParse(building.readData()))
+        System.err.println("${building.yL} ${building.yR}")
     }
 }
 
-class Building(W: Int, H: Int, x: Int, y: Int) {
+class Building() {
     val scan = Scanner(System.`in`)
+    val W = scan.nextInt()
+    val H = scan.nextInt()
+    var N = scan.nextInt()
+    var curPos = scan.nextInt() to scan.nextInt()
     var xL = 0
     var yL = 0
     var xR = W - 1
     var yR = H - 1
-    var curPos = x to y 
-
+    val firstCommand = scan.nextLine()
     fun readData() = scan.nextLine() ?: ""
+
 
     private fun binarySearch(left: Int, right: Int): Int{
         return  left + (right - left) / 2
