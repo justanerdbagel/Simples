@@ -1,0 +1,74 @@
+import java.util.*
+import java.io.*
+import java.math.*
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+fun main(args : Array<String>) {
+    val input = Scanner(System.`in`)
+    val N = input.nextInt() // the total number of nodes in the level, including the gateways
+    val L = input.nextInt() // the number of links
+    val E = input.nextInt() // the number of exit gateways
+
+    val graph = Graph(N, E)
+
+    for (i in 0 until L) {
+        val N1 = input.nextInt() // N1 and N2 defines a link between these nodes
+        val N2 = input.nextInt()
+        graph.addLink(N1, N2)
+
+    }
+    for (i in 0 until E) {
+        val EI = input.nextInt() // the index of a gateway node
+        graph.addGate(EI)
+    }
+
+    // game loop
+    while (true) {
+        val SI = input.nextInt() // The index of the node on which the Bobnet agent is positioned this turn
+        val cut = graph.nearestGateLinkBFS(SI)
+        graph.removeLink(cut.first, cut.second)
+        println("${cut.first} ${cut.second}")
+        // Write an action using println()
+        // To debug: System.err.println("Debug messages...");
+        // Example: 0 1 are the indices of the nodes you wish to sever the link between
+    }
+}
+
+class Graph(nodes: Int, numGate: Int) {
+    val graph: List<MutableSet<Int>> = List(nodes) { mutableSetOf() }
+    val gates: MutableList<Int> = MutableList(numGate) { -1 }
+
+    fun addLink(n1: Int, n2: Int) {
+        graph[n1].add(n2)
+        graph[n2].add(n1)
+    }
+
+    fun removeLink(n1: Int, n2: Int) {
+        graph[n1].remove(n2)
+        graph[n2].remove(n1)
+    }
+
+    fun getLinks(n1: Int): Set<Int> = graph[n1]
+
+    fun addGate(gate: Int) = gates.add(gate)
+
+    fun nearestGateLinkBFS(searchStart: Int): Pair<Int, Int> {
+        val visited: MutableSet<Int> = mutableSetOf()
+        val toSearch = graph[searchStart].toMutableList()
+
+        while (toSearch.isNotEmpty()) {
+            var searching = toSearch.removeFirst()
+            visited.add(searching)
+            var curLinks = graph[searching]
+            if (curLinks.union(gates).isNotEmpty()) {
+                return searching to curLinks.union(gates).first()
+            } else {
+                toSearch.plus(curLinks.minus(visited))
+            }
+        }
+        return -1 to -1
+    }
+}
