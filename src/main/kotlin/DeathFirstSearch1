@@ -39,7 +39,7 @@ fun main(args : Array<String>) {
 
 class Graph(nodes: Int, numGate: Int) {
     val graph: List<MutableSet<Int>> = List(nodes) { mutableSetOf() }
-    val gates: MutableList<Int> = MutableList(numGate) { -1 }
+    val gates: MutableList<Int> = MutableList(0) { -1 }
 
     fun addLink(n1: Int, n2: Int) {
         graph[n1].add(n2)
@@ -58,17 +58,19 @@ class Graph(nodes: Int, numGate: Int) {
     fun nearestGateLinkBFS(searchStart: Int): Pair<Int, Int> {
         val visited: MutableSet<Int> = mutableSetOf()
         val toSearch = graph[searchStart].toMutableList()
+        var searching = searchStart
+        var curLinks = graph[searching]
 
         while (toSearch.isNotEmpty()) {
-            var searching = toSearch.removeFirst()
             visited.add(searching)
-            var curLinks = graph[searching]
-            if (curLinks.union(gates).isNotEmpty()) {
-                return searching to curLinks.union(gates).first()
+            if (curLinks.intersect(gates).isNotEmpty()) {
+                return searching to curLinks.intersect(gates).first()
             } else {
                 toSearch.plus(curLinks.minus(visited))
             }
+            searching = toSearch.removeFirst()
+            //System.err.println(toSearch.toString())
         }
-        return -1 to -1
+        return searchStart to graph[searchStart].first()
     }
 }
