@@ -1,0 +1,18 @@
+fun main(args : Array<String>) {
+    readLine()
+    val input = readLine()!!.split(" ").map { it.toInt() }
+    var highest = 0
+    var lowPostHigh = Int.MAX_VALUE
+    var currentDrop = 0
+
+    input.forEach { num ->
+        if (num > highest) {
+            highest = num
+            lowPostHigh = num
+        } else if ( num < lowPostHigh) {
+            lowPostHigh = num
+            if (currentDrop > lowPostHigh - highest) currentDrop = lowPostHigh - highest
+        }
+    }
+    println(currentDrop)
+}
