@@ -1,0 +1,73 @@
+import java.util.*
+import java.io.*
+import java.math.*
+import kotlin.collections.ArrayDeque
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+fun main(args : Array<String>) {
+    val input = Scanner(System.`in`)
+    val R = input.nextInt() // number of rows.
+    val C = input.nextInt() // number of columns.
+    val A = input.nextInt() // number of rounds between the time the alarm countdown is activated and the time the alarm goes off.
+
+    // game loop
+    while (true) {
+        val KR = input.nextInt() // row where Rick is located.
+        val KC = input.nextInt() // column where Rick is located.
+        for (i in 0 until R) {
+            val ROW = input.next() // C of the characters in '#.TC?' (i.e. one line of the ASCII maze).
+        }
+
+        // Write an action using println()
+        // To debug: System.err.println("Debug messages...");
+
+        println("RIGHT") // Rick's next move (UP DOWN LEFT or RIGHT).
+    }
+}
+
+class Game(val sizeX: Int,val sizeY: Int, rounds: Int, val startPos: Pair<Int, Int>) {
+    val input = Scanner(System.`in`)
+    val boardInput: MutableList<String> = MutableList(sizeY) { "" }
+    val exploreState: List<MutableList<Char>> = List(sizeY) { mutableListOf() }
+    val pathTaken: ArrayDeque<Pair<Int, Int>> = ArrayDeque()
+    var position: Pair<Int, Int> = startPos
+
+    fun inputBoard() {
+        for (i in 0 until sizeY) {
+            BoardInput[i] = input.nextLine()
+        }
+    }
+
+    fun updatePos() {
+        position = input.nextInt() to input.nextInt()
+        if (pathTaken[pathTaken.lastIndex - 1] == position) {
+            pathTaken.removeLast()
+        } else {
+            pathTaken.add(position)
+        }
+    }
+    fun BFS() {
+        TODO()
+    }
+
+    fun decideRLUD() {
+        //uses sampleDir, creates decision eval by comparing dirSamples
+        //prefers no wall & closer unknown
+        TODO()
+    }
+
+    fun sampleDir(dir: Char, posX: Int, posY: Int): List<Char> {
+        // Takes dir & pos, returns chars in dir, sample[0] closer to pos, sample.last farther
+        val sample: MutableList<Char> = mutableListOf()
+        when {
+            dir == 'U' -> for (i in posY downTo 0) {
+                sample.add(boardInput[i][posX])
+            }
+
+        }
+        return sample.toList()
+    }
+}

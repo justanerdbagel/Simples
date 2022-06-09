@@ -1,0 +1,16 @@
+import java.util.*
+fun main(args : Array<String>) {
+    val input = readln().split(" ")
+    val game: Game = Game(input[0].toInt(), input[1].toInt())
+
+    // Write an answer using println()
+    // To debug: System.err.println("Debug messages...");
+
+    println("answer")
+}
+
+class Game(ySize: Int, xSize: Int) {
+    val board: List<MutableList<Char>> = List(ySize) { readln().toCharArray().toMutableList() }
+
+
+}
